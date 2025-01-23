@@ -9,11 +9,14 @@ import { ThemeProvider } from "@material-tailwind/react";
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
 root.render(
-    <ThemeProvider>
-      <BrowserRouter>
-        <Provider store={store}>
-          <App />
-        </Provider>
-      </BrowserRouter>
+
+  <React.StrictMode>
+  <ThemeProvider>
+    <BrowserRouter>
+      <Provider store={store}>
+        <App />
+      </Provider>
+    </BrowserRouter>
     </ThemeProvider>
+  </React.StrictMode>
 );

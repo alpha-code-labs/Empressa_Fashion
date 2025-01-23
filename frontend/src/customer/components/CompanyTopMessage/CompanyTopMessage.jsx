@@ -3,23 +3,28 @@ import React from 'react'
 const CompanyTopMessage = () => {
     return (
         <>
-            <div className='w-full md:w-1/3 px-3 md:mb-0  mx-auto max-w-[1000px] '>
-
-
-                <div className='mt-[100px]'>
+            <div className='w-full md:w-1/3 px-3 md:mb-0  mx-auto max-w-[1000px]'>
+        
+                <div className='mt-[80px] flex items-center justify-center'>
                     <img
-                        src="images/31.webp"
-                        alt="asd"
+                        src="https://res.cloudinary.com/du5p1rnil/image/upload/f_auto,q_auto/v1/empressa/trlajilv4tdjxco53foy"
+                        alt="put an small icon here related to my empressa"
+                        className='h-20 w-20'
                     />
                 </div>
-                <p className='text-center text-5xl  text-black mt-[50px] '>
-                    Empowering Change
+
+                <p className='font-text text-center text-4xl  text-black mt-[50px] '>
+                                Our Story                     
                 </p>
                 <p className='italic  text-center text-2xl  text-gray-800  mt-[5px] '>
-                    The power of love and reciprocity
+                "Be Bold, Be You, Be Unstoppable"
                 </p>
-                <p className='text-center text-xl text-justify text-gray-700 mt-[50px] px-4'>
-                    Our goal has always been to support Indian women in the workplace and to honor their contributions with deep reverence. Since our establishment, we’ve shared a dream with our makers to empower all women and make them feel valued and respected. Slowly, with love and intention, we’re bringing this dream to life.
+                <p className='font-heading text-center text-lg text-gray-800 mt-[30px]'>
+                Founded with a vision to dismantle the constraints of patriarchy and empower women, our fashion brand emerged as a beacon of change. Our journey began with the belief that fashion is not just clothing but a means of self-expression and liberation. We saw the need for a brand that celebrates women's beauty and strength while supporting their dreams and ambitions.
+                </p>
+
+                <p className='font-heading text-center text-lg  text-gray-800  mt-[30px] '>
+                Inspired by countless stories of women who have defied societal norms and expectations, we sought to create a platform that showcases fashion as a testament to their resilience and spirit. We are committed to offering fashion that empowers women to be confident and bold.
                 </p>
             </div>
         </>

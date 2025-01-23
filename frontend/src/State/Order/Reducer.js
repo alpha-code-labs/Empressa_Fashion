@@ -8,7 +8,6 @@ import {
   GET_ORDER_HISTORY_REQUEST,
     GET_ORDER_HISTORY_SUCCESS,
     GET_ORDER_HISTORY_FAILURE,
-    RESET_ORDER_STATE
 } from "./ActionType";
 
 const initialState = {
@@ -81,8 +80,6 @@ export const orderReducer = (state = initialState, action) => {
         error: action.payload,
         orders: [],
       };
-    case RESET_ORDER_STATE:
-      return {...initialState}
     default:
       return state;
   }

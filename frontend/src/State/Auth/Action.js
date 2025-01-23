@@ -1,34 +1,31 @@
 import axios from "axios";
 import { API_BASE_URL } from "../../config/apiConfig";
-import { 
-    GET_USER_FAILURE, GET_USER_REQUEST, GET_USER_SUCCESS, 
-    LOGIN_FAILURE, LOGIN_REQUEST, LOGIN_SUCCESS, 
+import {
+    GET_USER_FAILURE, GET_USER_REQUEST, GET_USER_SUCCESS,
+    LOGIN_FAILURE, LOGIN_REQUEST, LOGIN_SUCCESS,
     LOGOUT, REGISTER_FAILURE, REGISTER_REQUEST, REGISTER_SUCCESS,
     FORGOT_PASSWORD_FAILURE, FORGOT_PASSWORD_SUCCESS, FORGOT_PASSWORD_REQUEST,
     RESET_PASSWORD_FAILURE, RESET_PASSWORD_SUCCESS, RESET_PASSWORD_REQUEST,
-    TOGGLE_AUTH_MODAL,
-    RESET_AUTH_STATE,
+    LOGIN_WITH_GOOGLE_REQUEST, LOGIN_WITH_GOOGLE_SUCCESS, LOGIN_WITH_GOOGLE_FAILURE,
+    LOGIN_WITH_FACEBOOK_REQUEST, LOGIN_WITH_FACEBOOK_SUCCESS, LOGIN_WITH_FACEBOOK_FAILURE,
 } from "./ActionType";
 
 const token = localStorage.getItem("jwt");
 
 // Register action creators
 const registerRequest = () => ({ type: REGISTER_REQUEST });
-const registerSuccess = (emailSent, jwt) => ({ type: REGISTER_SUCCESS, payload: emailSent });
+const registerSuccess = (user) => ({ type: REGISTER_SUCCESS, payload: user });
 const registerFailure = (error) => ({ type: REGISTER_FAILURE, payload: error });
 
 export const register = (userData) => async (dispatch) => {
     dispatch(registerRequest());
     try {
         const response = await axios.post(`${API_BASE_URL}/auth/signup`, userData);
-        //temporary arrangement in absence of email service
-        const {emailSent, jwt} = response.data;
-        console.log(emailSent, jwt, 'email + jwt')
-        if (jwt) {
-            localStorage.setItem("jwt", jwt);
+        const user = response.data;
+        if (user.jwt) {
+            localStorage.setItem("jwt", user.jwt);
         }
-        dispatch(registerSuccess(emailSent));
-        dispatch(loginSuccess(jwt))
+        dispatch(registerSuccess(user.jwt));
     } catch (error) {
         dispatch(registerFailure(error.response?.data?.error || error.message));
     }
@@ -49,8 +46,7 @@ export const login = (userData) => async (dispatch) => {
         }
         dispatch(loginSuccess(user.jwt));
     } catch (error) {
-        console.log(error, 'error from login state')
-        dispatch(loginFailure(error.response?.data?.message??error.message));
+        dispatch(loginFailure(error.response?.data?.error || error.message));
     }
 }
 
@@ -62,7 +58,7 @@ const getUserFailure = (error) => ({ type: GET_USER_FAILURE, payload: error });
 export const getUser = (jwt) => async (dispatch) => {
     dispatch(getUserRequest());
     try {
-        const response = await axios.get(`${API_BASE_URL}/api/users/profile`, {
+        const response = await axios.get(`${API_BASE_URL}/api/users//profile`, {
             headers: {
                 "Authorization": `Bearer ${jwt}`
             }
@@ -94,7 +90,6 @@ export const forgotPassword = (email) => async (dispatch) => {
     }
 };
 
-
 // Reset password action creators
 const resetPasswordRequest = () => ({ type: RESET_PASSWORD_REQUEST });
 const resetPasswordSuccess = (message) => ({ type: RESET_PASSWORD_SUCCESS, payload: message });
@@ -110,10 +105,42 @@ export const resetPassword = (data) => async (dispatch) => {
     }
 };
 
-export const resetInitialState = ()=>{{type: RESET_PASSWORD_REQUEST}};
+const loginWithGoogleRequest = () => ({ type: LOGIN_WITH_GOOGLE_REQUEST });
+const loginWithGoogleSuccess = (user) => ({ type: LOGIN_WITH_GOOGLE_SUCCESS, payload: user });
+const loginWithGoogleFailure = (error) => ({ type: LOGIN_WITH_GOOGLE_FAILURE, payload: error });
 
-export const setAuthModal = (bool)=>(dispatch)=>{
-    dispatch(()=>({type: TOGGLE_AUTH_MODAL, payload: bool}));
+export const loginWithGoogle = (token) => async (dispatch) => {
+    dispatch(loginWithGoogleRequest());
+    try {
+        const response = await axios.get(`${API_BASE_URL}/auth/google/callback`, { token });
+        const user = response.data;
+        if (user.jwt) {
+            localStorage.setItem('jwt', user.jwt);
+        }
+        dispatch(loginWithGoogleSuccess(user.jwt));
+        return Promise.resolve(user);
+    } catch (error) {
+        dispatch(loginWithGoogleFailure(error.response?.data?.error || error.message));
+        return Promise.reject(error.response?.data?.error || error.message);
+    }
+};
+
+const loginWithFacebookRequest = () => ({ type: LOGIN_WITH_FACEBOOK_REQUEST });
+const loginWithFacebookSuccess = (user) => ({ type: LOGIN_WITH_FACEBOOK_SUCCESS, payload: user });
+const loginWithFacebookFailure = (error) => ({ type: LOGIN_WITH_FACEBOOK_FAILURE, payload: error });
+
+export const loginWithFacebook = (token) => async (dispatch) => {
+    dispatch(loginWithFacebookRequest());
+    try {
+        const response = await axios.get(`${API_BASE_URL}/auth/facebook/callback`, { token });
+        const user = response.data;
+        if (user.jwt) {
+            localStorage.setItem('jwt', user.jwt);
+        }
+        dispatch(loginWithFacebookSuccess(user.jwt));
+        return Promise.resolve(user);
+    } catch (error) {
+        dispatch(loginWithFacebookFailure(error.response?.data?.error || error.message));
+        return Promise.reject(error.response?.data?.error || error.message);
+    }
 }
-
-export const resetAuth = ()=>({type: RESET_AUTH_STATE})

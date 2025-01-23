@@ -9,7 +9,6 @@ import {
     GET_ORDER_HISTORY_REQUEST,
     GET_ORDER_HISTORY_SUCCESS,
     GET_ORDER_HISTORY_FAILURE,
-    RESET_ORDER_STATE,
 } from "./ActionType";
 import { api } from "../../config/apiConfig";
 
@@ -39,7 +38,6 @@ export const createOrder = (reqData) => async (dispatch) => {
 };
 
 export const getOrderById = (orderId) => async (dispatch) => {
-   if(orderId != null){
     dispatch({ type: GET_ORDER_BY_ID_REQUEST });
     try {
 
@@ -60,7 +58,6 @@ export const getOrderById = (orderId) => async (dispatch) => {
             payload: error.message
         });
     }
-   }
 };
 
 export const getOrderHistory = (reqData) => async (dispatch, getState) => {
@@ -90,6 +87,4 @@ export const getOrderHistory = (reqData) => async (dispatch, getState) => {
     }
   };
   
-
-  export const resetOrder = () =>({RESET_ORDER_STATE})
 

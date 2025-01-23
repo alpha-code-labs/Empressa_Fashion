@@ -1,23 +1,4 @@
-import { ADD_ITEM_TO_CART_FAILURE, 
-    ADD_ITEM_TO_CART_REQUEST, 
-    ADD_ITEM_TO_CART_SUCCESS, 
-    APPLY_COUPON_FAILURE, 
-    APPLY_COUPON_REQUEST, 
-    APPLY_COUPON_SUCCESS,
-    REMOVE_COUPON_REQUEST,
-    REMOVE_COUPON_SUCCESS,
-    REMOVE_COUPON_FAILURE, 
-    GET_CART_FAILURE, 
-    GET_CART_REQUEST, 
-    GET_CART_SUCCESS, 
-    REMOVE_CART_ITEM_FAILURE, 
-    REMOVE_CART_ITEM_REQUEST, 
-    REMOVE_CART_ITEM_SUCCESS, 
-    UPDATE_CART_ITEM_FAILURE, 
-    UPDATE_CART_ITEM_REQUEST, 
-    UPDATE_CART_ITEM_SUCCESS,
-    RESET_CART_STATE,
- } from "./ActionType";
+import { ADD_ITEM_TO_CART_FAILURE, ADD_ITEM_TO_CART_REQUEST, ADD_ITEM_TO_CART_SUCCESS, GET_CART_FAILURE, GET_CART_REQUEST, GET_CART_SUCCESS, REMOVE_CART_ITEM_FAILURE, REMOVE_CART_ITEM_REQUEST, REMOVE_CART_ITEM_SUCCESS, UPDATE_CART_ITEM_FAILURE, UPDATE_CART_ITEM_REQUEST, UPDATE_CART_ITEM_SUCCESS } from "./ActionType";
 
 const initialState = {
     cart: null,
@@ -36,7 +17,6 @@ export const cartReducer = (state = initialState, action) => {
                 ...state,   
                 cartItems: [...state.cartItems, action.payload.cartItems],
                 loading: false,
-                error: null,
             };
         case ADD_ITEM_TO_CART_FAILURE:
             return { ...state, loading: false, error: action.payload };
@@ -86,20 +66,6 @@ export const cartReducer = (state = initialState, action) => {
                 error: action.payload,
                 loading: false,
             };
-        case APPLY_COUPON_REQUEST:
-            return {...state, loading:true, error:null}
-        case APPLY_COUPON_SUCCESS:
-            return {...state, loading:false, error:null}
-        case APPLY_COUPON_FAILURE:
-            return {...state, loading:false, error:action.payload}
-        case REMOVE_COUPON_REQUEST:
-            return {...state, loading:true, error:null}
-        case REMOVE_COUPON_SUCCESS:
-            return {...state, loading:false, error:null}
-        case REMOVE_COUPON_FAILURE:
-            return {...state, loading:false, error:action.payload}
-        case RESET_CART_STATE:
-            return {...initialState}
         default:
             return state;
     }

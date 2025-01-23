@@ -1,0 +1,120 @@
+import React from "react";
+import { Link } from "react-router-dom";
+import InstagramIcon from '@mui/icons-material/Instagram';
+import EmailIcon from '@mui/icons-material/Email'
+import { useNavigate } from "react-router-dom";
+function Footer() {
+  const navigate = useNavigate()
+  return (
+    <>
+      <link
+        rel="stylesheet"
+        href="https://demos.creative-tim.com/notus-js/assets/styles/tailwind.css"
+      />
+      <link
+        rel="stylesheet"
+        href="https://demos.creative-tim.com/notus-js/assets/vendor/@fortawesome/fontawesome-free/css/all.min.css"
+      />
+      <footer className="relative bg-[#44496c] pt-8 pb-6">
+        <div className="container mx-auto px-4">
+          <div className="flex flex-wrap text-left lg:text-left">
+            <div className="w-full lg:w-6/12 px-4">
+              <h4 className="text-3xl fonat-semibold text-white">
+                EMPRESSA
+              </h4>
+              <h5 className="text-lg mt-0 mb-2 text-white">
+                BE BOLD, BE YOU, BE UNSTOPPABLE
+              </h5>
+              <div className="mt-6 lg:mb-0 mb-6">
+                <button onClick={() => window.location.href = "https://www.instagram.com/empressa_fashion/"}
+                  className="bg-white text-lightBlue-400 shadow-lg font-normal h-10 w-10 items-center justify-center align-center rounded-full outline-none focus:outline-none mr-2"
+                  type="button">
+                  <InstagramIcon />
+                </button>
+                <button onClick={() => navigate("/contact")}
+                  className="bg-white text-lightBlue-600 shadow-lg font-normal h-10 w-10 items-center justify-center align-center rounded-full outline-none focus:outline-none mr-2"
+                  type="button">
+                  <EmailIcon />
+                </button>
+              </div>
+            </div>
+            <div className="w-full lg:w-6/12 px-4">
+              <div className="flex flex-wrap items-top mb-6">
+                <div className="w-full lg:w-4/12 px-4 ml-auto">
+                  <span className="text-white block uppercase  text-sm font-semibold mb-2">
+                    Useful Links
+                  </span>
+                  <ul className="list-unstyled">
+                    <li as={Link}>
+                      <Link
+                        className="text-white hover:text-blueGray-800 font-semibold block pb-2 text-sm"
+                        to="/about"
+                      >
+                        About Us
+                      </Link>
+                    </li>
+                    <li as={Link}>
+                      <Link
+                        className="text-white hover:text-blueGray-800 font-semibold block pb-2 text-sm"
+                        to="/contact"
+                      >
+                        Contact Us
+                      </Link>
+                    </li>
+                    <li>
+                      <Link to="/journal">
+                        <p className="text-white hover:text-blueGray-800 font-semibold block pb-2 text-sm">
+                          Journal
+                        </p>
+                      </Link>
+                    </li>
+                  </ul>
+                </div>
+                <div className="w-full lg:w-4/12 px-4">
+                  <span className="block uppercase text-white text-sm font-semibold mb-2">
+                    Other Resources
+                  </span>
+                  <ul className="list-unstyled">
+                    <li>
+                      <Link to="/refund">
+                        <p className="text-white hover:text-blueGray-800 font-semibold block pb-2 text-sm">
+                          Refund
+                        </p>
+                      </Link>
+                    </li>
+                    <li>
+                      <Link to="/privacy">
+                        <p className="text-white hover:text-blueGray-800 font-semibold block pb-2 text-sm">
+                          Privacy Policy
+                        </p>
+                      </Link>
+                    </li>
+                    <li>
+                      <Link to="/term">
+                        <p className="text-white hover:text-blueGray-800 font-semibold block pb-2 text-sm">
+                          Term and Services
+                        </p>
+                      </Link>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+          <hr className="my-6 border-blueGray-300" />
+          <div className="flex flex-wrap items-center md:justify-between justify-center">
+            <div className="w-full md:w-4/12 px-4 mx-auto text-center">
+              <div className="text-sm text-blueGray-500 font-semibold py-1">
+                Copyright © <span id="get-current-year">2024</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </footer >
+
+      
+    </>
+  );
+}
+
+export default Footer;

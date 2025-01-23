@@ -6,10 +6,6 @@ import { cartReducer } from "./Cart/Reducer";
 import { orderReducer } from "./Order/Reducer";
 import { adminOrderReducer } from "./AdminOrder/Reducer";
 import { collectionsReducer } from "./Collection/Reducer";
-import { addressReducer } from "./Address/Reducer";
-import { walletReducer } from "./Wallet/Reducer";
-import { couponReducer } from "./Coupon/Reducer";
-import { paymentReducer } from "./Payment/Reducer";
 
 import journalReducer from "./Journal/reducers";
 
@@ -21,10 +17,6 @@ const rootReducers = combineReducers({
     adminOrder: adminOrderReducer,
     journal: journalReducer,
     collections: collectionsReducer,
-    address: addressReducer,
-    wallet: walletReducer,
-    coupon: couponReducer,
-    payment: paymentReducer,
 })
 
 export const store = createStore(rootReducers, applyMiddleware(thunk))

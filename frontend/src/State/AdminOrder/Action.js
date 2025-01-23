@@ -122,5 +122,3 @@ export const placeOrder = (order) => async (dispatch) => {
     dispatch(placedOrderFailure(error.message));
   }
 };
-
-export const resetAdminOrder = ()=>({RESET_ADMIN_ORDER_STATE})

@@ -1,9 +1,11 @@
-import React, { useState,  useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { getUser, register } from '../../State/Auth/Action';
+import { getUser, register, loginWithGoogle } from '../../State/Auth/Action';
+import TermPage from "../pages/TermPage";
+import { FormGroup, FormControlLabel, Checkbox, Typography, Tooltip } from '@mui/material';
 
 const RegisterForm = () => {
 
@@ -12,6 +14,7 @@ const RegisterForm = () => {
     const jwt = localStorage.getItem("jwt")
     const auth = useSelector(state => state.auth)
     const [passwordVisible, setPasswordVisible] = useState(false);
+    const [termsChecked, setTermsChecked] = useState(false);
     const togglePasswordVisibility = () => {
         setPasswordVisible(!passwordVisible);
     };
@@ -20,9 +23,7 @@ const RegisterForm = () => {
         if (jwt) {
             dispatch(getUser(jwt))
         }
-
     }, [jwt, auth.jwt])
-
 
     const handleSubmit = (event) => {
         event.preventDefault()
@@ -34,20 +35,27 @@ const RegisterForm = () => {
             lastName: data.get("lastName"),
             email: data.get("email"),
             password: data.get("password"),
-            referralCode: data.get("referralCode"),
+            mobile: data.get("mobile"),
         }
 
         dispatch(register(userData))
         console.log("user data", userData);
     }
+    const loginWithFacebook = () => {
+        window.open("http://localhost:5454/auth/facebook", "_self");
+    };
+
+    const registerWithGoogle = () => {
+        window.open("http://localhost:5454/auth/google", "_self");
+    };
 
     return (
-        <div className="flex flex-col items-center">
+        <div className="flex flex-col items-center mt-2">
             <form onSubmit={handleSubmit} className="w-full bg-white rounded-md">
-                <div className="grid grid-cols-1 mb-6 sm:grid-cols-2 gap-2">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                     <div>
                         <label htmlFor="firstName" className="block text-sm font-medium text-gray-700">
-                            First Name <span className='text-red-400'>*</span>
+                            First Name
                         </label>
                         <input
                             type="text"
@@ -59,7 +67,7 @@ const RegisterForm = () => {
                     </div>
                     <div>
                         <label htmlFor="lastName" className="block text-sm font-medium text-gray-700">
-                            Last Name <span className='text-red-400'>*</span>
+                            Last Name
                         </label>
                         <input
                             type="text"
@@ -71,7 +79,7 @@ const RegisterForm = () => {
                     </div>
                     <div className="sm:col-span-2">
                         <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                            Email <span className='text-red-400'>*</span>
+                            Email
                         </label>
                         <input
                             type="email"
@@ -83,7 +91,7 @@ const RegisterForm = () => {
                     </div>
                     <div className="sm:col-span-2 relative">
                         <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                            Password <span className='text-red-400'>*</span>
+                            Password
                         </label>
                         <input
                             type={passwordVisible ? 'text' : 'password'}
@@ -101,31 +109,63 @@ const RegisterForm = () => {
                         </div>
                     </div>
                     <div className="sm:col-span-2">
-                        <label htmlFor="referralCode" className="block text-sm font-medium text-gray-700">
-                            Referral Code <span className='text-gray-500'>(Optional)</span>
+                        <label htmlFor="mobile" className="block text-sm font-medium text-gray-700">
+                            Phone Number
                         </label>
                         <input
-                            type="text"
-                            id="referralCode"
-                            name="referralCode"
+                            type="mobile"
+                            id="mobile"
+                            name="mobile"
+                            required
                             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                         />
                     </div>
                 </div>
+                <FormGroup>
+                    <FormControlLabel
+                        control={<Checkbox checked={termsChecked} onChange={() => setTermsChecked(!termsChecked)} />}
+                        label={<span>I agree to the <a href="/TermPage" target="_blank" rel="noopener noreferrer" className="text-indigo-600 hover:underline">Terms & Conditions</a></span>}
+                        sx={{ '& .MuiFormControlLabel-label': { fontSize: 10 } }}
+                    />
+                </FormGroup>
 
                 <div className="sm:col-span-2">
-                    <button
-                        type="submit"
-                        className="w-full py-2 px-4 bg-gray-600 text-white font-semibold rounded-md hover:bg-gray-700"
-                    >
-                        Register
-                    </button>
+                    <Tooltip title={!termsChecked ? "Read the terms and conditions first" : ""}>
+                        <span>
+                            <button
+                                type="submit"
+                                className={`w-full py-2 px-4 ${termsChecked ? 'bg-gray-600 hover:bg-gray-700' : 'bg-gray-400 cursor-not-allowed'} text-white font-semibold rounded-md`}
+                                disabled={!termsChecked}
+                            >
+                                Register
+                            </button>
+                        </span>
+                    </Tooltip>
                 </div>
-
-                <p className='text-red-400 mt-4'>{auth?.error}</p>
             </form>
-
-            <div className="mt-6 flex flex-col items-center">
+            <div className="mt-2 flex flex-col items-center">
+                <button
+                    className="transition duration-300 ease-in-out bg-white hover:bg-gray-200 text-gray-600 font-medium text-sm py-3 px-10 rounded-sm shadow-sm hover:shadow-lg focus:outline-none focus:shadow-lg focus:ring-2 focus:ring-blue-300 cursor-pointer mt-5"
+                    onClick={registerWithGoogle}
+                    style={{
+                        backgroundImage: 'url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48cGF0aCBkPSJNMTcuNiA5LjJsLS4xLTEuOEg5djMuNGg0LjhDMTMuNiAxMiAxMyAxMyAxMiAxMy42djIuMmgzYTguOCA4LjggMCAwIDAgMi42LTYuNnoiIGZpbGw9IiM0Mjg1RjQiIGZpbGwtcnVsZT0ibm9uemVybyIvPjxwYXRoIGQ9Ik05IDE4YzIuNCAwIDQuNS0uOCA2LTIuMmwtMy0yLjJhNS40IDUuNCAwIDAgMS04LTIuOUgxVjEzYTkgOSAwIDAgMCA4IDV6IiBmaWxsPSIjMzRBODUzIiBmaWxsLXJ1bGU9Im5vbnplcm8iLz48cGF0aCBkPSJNNCAxMC43YTUuNCA1LjQgMCAwIDEgMC0zLjRWNUgxYTkgOSAwIDAgMCAwIDhsMy0yLjN6IiBmaWxsPSIjRkJCQzA1IiBmaWxsLXJ1bGU9Im5vbnplcm8iLz48cGF0aCBkPSJNOTAzYzExLjMgMCAyLjUuNCAzLjQxMUwxNSAyLjNBOSA5IDAgMCAwIDEgNWwzIDIuNGE1LjQgNS40IDAgMCAxIDUtMy43eiIgZmlsbD0iI0VBNDMzNSIgZmlsbC1ydWxlPSJub256ZXJvIi8+PHBhdGggZD0iTTAgMGgxOHYxOEgweiIvPjwvZz48L3N2Zz4=)',
+                        backgroundRepeat: 'no-repeat',
+                        backgroundPosition: '12px 11px'
+                    }}
+                >
+                    Register With Google
+                </button>
+                <button
+                    className="transition duration-300 ease-in-out bg-blue-100 hover:bg-gray-200 text-gray-600 font-medium text-sm py-3 px-10 rounded-sm shadow-sm hover:shadow-lg focus:outline-none focus:shadow-lg focus:ring-2 focus:ring-blue-300 cursor-pointer mt-5"
+                    onClick={loginWithFacebook}
+                    style={{
+                        // backgroundImage: 'url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48cGF0aCBkPSJNMTcuNiA5LjJsLS4xLTEuOEg5djMuNGg0LjhDMTMuNiAxMiAxMyAxMyAxMiAxMy42djIuMmgzYTguOCA4LjggMCAwIDAgMi42LTYuNnoiIGZpbGw9IiM0Mjg1RjQiIGZpbGwtcnVsZT0ibm9uemVybyIvPjxwYXRoIGQ9Ik05IDE4YzIuNCAwIDQuNS0uOCA2LTIuMmwtMy0yLjJhNS40IDUuNCAwIDAgMS04LTIuOUgxVjEzYTkgOSAwIDAgMCA4IDV6IiBmaWxsPSIjMzRBODUzIiBmaWxsLXJ1bGU9Im5vbnplcm8iLz48cGF0aCBkPSJNOTAzYzExLjMgMCAyLjUuNCAzLjQxMUwxNSAyLjNBOSA5IDAgMCAwIDEgNWwzIDIuNGE1LjQgNS40IDAgMCAxIDUtMy43eiIgZmlsbD0iI0VBNDMzNSIgZmlsbC1ydWxlPSJub256ZXJvIi8+PHBhdGggZD0iTTAgMGgxOHYxOEgweiIvPjwvZz48L3N2Zz4=)',
+                        backgroundRepeat: 'no-repeat',
+                        backgroundPosition: '12px 11px'
+                    }}
+                >
+                    Sign In With Facebook
+                </button>
                 <div className="py-3 flex items-center">
                     <p className="m-0 p-0">If you have an account?</p>
                     <button
@@ -141,178 +181,3 @@ const RegisterForm = () => {
 }
 
 export default RegisterForm
-
-
-
-// import {useState, useRef, useEffect} from 'react'
-// import axios from 'axios'
-// import {Link, useNavigate} from 'react-router-dom'
-// import countries from '../utils/countryList.json'
-// import Input from '../components/Input'
-// import InputFieldSelect from '../components/InputFieldSelect'
-// import FormMessage from '../components/FromMessage'
-// import Loading from '../components/Loading'
-// import {motion} from 'framer-motion'
-
-// const env = 'production'
-
-// export default function Register(){
-//     const firstNameRef = useRef(null)
-//     const lastNameRef = useRef(null)
-//     const countryRef = useRef(null)
-//     const emailRef = useRef(null)
-//     const passwordRef = useRef()
-
-//     const [firstNameError, setFirstNameError] = useState(false)
-//     const [lastNameError, setLastNameError] = useState(false)
-//     const [emailError, setEmailError] = useState(false)
-//     const [countryError, setCountryError] = useState(false)
-//     const [passwordError, setPasswordError] = useState(false)
-//     const [error, setError] = useState(false)
-//     const [success, setSuccess] = useState(false)
-//     const [fetchingFromServer, setFetchingFromServer] = useState(false)
-//     const host = env=='dev' ? 'http://localhost:8084' : 'https://acl-zeta.vercel.app' 
-
-//     //animatin transition type
-//     const spring = {
-//         type: 'spring',
-//         damping: 10,
-//         stiffness: 100
-//     }
-
-    
-//     useEffect(()=>{
-//         firstNameRef.current.focus()
-//     },[])
-    
-//     //if user registered sucessfull.. redirect them to login page
-//     const navigate = useNavigate()
-
-//     useEffect(()=>{
-//         if(success){
-//             setTimeout(()=>{navigate('/login')},3000)
-//         }
-//     },[success])
-
-//     //for submit handler
-//     const handleSubmit = async (event) =>{
-//         event.preventDefault()
-
-//     //validate all input befor sending to server
-//         const firstName = firstNameRef.current.value
-//         const lastName = lastNameRef.current.value
-//         const email = emailRef.current.value.toLowerCase()
-//         const password = passwordRef.current.value
-//         const country = countryRef.current.value
-
-//         setFirstNameError(false)
-//         setLastNameError(false)
-//         setCountryError(false)
-//         setEmailError(false)
-//         setPasswordError(false)
-//         setError(false)
-
-//         let goodToGo = true
-
-//         if(firstName === ''){
-//             setError('Please provide your first name')
-//             setFirstNameError(true)
-//             return
-//         }
-//         if(lastName === ''){
-//             setError('Plase provide your last Name')
-//             setLastNameError(true)
-//             return
-//         }
-
-//         if(country === '' || country === 'select country'){
-//             setError('Please select your country')
-//             setCountryError(true)
-//             return
-//         }
-//         if(email === '') {
-//             setError('Please provide your email address')
-//             setEmailError(true)
-//             return
-//         }
-//         if(password === '') {
-//             setError('Please enter a password')
-//             setPasswordError(true)
-//             return
-//         }
-
-
-//         if(email!==''){
-//             if(!email.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/)){
-//                 setError('Invalid Email')
-//                 setEmailError(true)
-//                 return
-//             }
-//         }
-    
-//     //Everything looks good send the form to server
-        
-//     setFetchingFromServer(true)
-
-//         try{
-//             axios.post(`${host}/api/register`, {firstName, lastName, country, email, password})
-//             .then(res=>{
-//                 setFetchingFromServer(false)
-//                 console.log(res.data)
-//                 if(res.data.type!==undefined && res.data.type==='error'){
-//                     setError(res.data.message)
-//                     setEmailError(true)
-//                 }
-                    
-                
-//                 if(res.data.type!==undefined && res.data.type==='success')
-//                     setSuccess(`${res.data.message}. Redirecting you to the login page..`)
-                
-//             })
-            
-//         }
-//         catch(err){
-//             console.log(err)
-//             setError(err.message)
-//             setFetchingFromServer(false)
-//         }
-        
-//     }
-
-//     return(
-//     <div className='login_container'>
-//         <div className='topbar'>
-//             <div className='logoText'>
-//                 <Link to='/'>Puzzler</Link>
-//             </div>
-//         </div>
-//         <div className="form_container_wrapper">
-//             <motion.div className="form_container" initial={{transform:'scale(.2)', opacity:0}} animate={{transform:'scale(1)', opacity:1}} transition={{duration:.2, spring}}>
-//             <form onSubmit={handleSubmit}>
-//             <div style={{display:'flex', columnGap:'8px', marginBottom:'14px'}}>
-//                 <Input placeholder={'First Name'} ref={firstNameRef} type={'text'} error={firstNameError} />
-//                 <Input placeholder={'Last Name'} ref={lastNameRef} type={'text'} error={lastNameError} />
-//             </div>
-            
-//             <InputFieldSelect placeholder={'Country'} ref={countryRef} optionsList={countries} error={countryError} />
-//             <Input placeholder={'Email'} ref={emailRef} type={'text'} error={emailError} />
-//             <Input placeholder={'Password'} ref={passwordRef} type={'password'} error={passwordError} />
-//             {error && <FormMessage type='error' message={error}/>}
-//             {success && <FormMessage type='success' message={success}/>}
-//             {fetchingFromServer && <Loading/>}
-
-//             <div className='form_button_wrapper'>
-//                 <button className={fetchingFromServer? 'button form_button disabled' : 'button form_button'} type='submit' >Register</button>
-//             </div>
-//             <br/>
-//         <div style={{textAlign:'center'}}>
-//          Already have an account? <Link to='/login' className='registerLink'>Login</Link>
-//         </div>
-//         </form>      
-//             </motion.div>
-//         </div>
-//         <div className='spacer layer1'></div>
-//     </div>
-
-    
-// )}

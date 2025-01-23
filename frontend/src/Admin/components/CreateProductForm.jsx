@@ -1,10 +1,8 @@
-import { useEffect, useState } from "react";
-import { Typography, Grid, TextField, Button, Select, MenuItem, InputLabel } from "@mui/material";
+import { useState } from "react";
+import { Typography, Grid, TextField, Button } from "@mui/material";
 import { useDispatch } from "react-redux";
 import { createProduct } from "../../State/Product/Action";
 import { useNavigate } from "react-router-dom";
-import FileUploader from "../../customer/components/FileUploader/Index";
-import SelectInput from "@mui/material/Select/SelectInput";
 
 const initialSizes = [
   { name: "S", quantity: 0 },
@@ -13,11 +11,11 @@ const initialSizes = [
   { name: "XL", quantity: 0 },
   { name: "2XL", quantity: 0 },
 ];
-
+const initialImageUrls = ["", "", "", "", ""];
 
 const CreateProductForm = () => {
   const [productData, setProductData] = useState({
-    imageUrl: [],
+    imageUrl: initialImageUrls,
     brand: "",
     title: "",
     color: "",
@@ -30,13 +28,8 @@ const CreateProductForm = () => {
     SKU: "",
     neck_type: "", 
     sleeve_style: "", 
-    collectionName: "Radiant Rebellion",
-    defaultImageIndex: 0,
+    collections: "", 
   });
-
-  useEffect(()=>{
-    console.log(productData, 'product data');
-  },[productData])
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -59,16 +52,19 @@ const CreateProductForm = () => {
     }));
   };
 
+  const handleImageUrlChange = (e, index) => {
+    const { value } = e.target;
+    const imageUrls = [...productData.imageUrl];
+    imageUrls[index] = value;
+    setProductData((prevState) => ({
+      ...prevState,
+      imageUrl: imageUrls,
+    }));
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     dispatch(createProduct(productData));
-  };
-
-  const handleImageSelect = (index) => {
-    setProductData(pre=>({
-      ...pre,
-      defaultImageIndex:index
-    }))
   };
 
   return (
@@ -76,27 +72,20 @@ const CreateProductForm = () => {
       <Typography variant="h4" sx={{ textAlign: "center" }} className="py-4">
         Add New Product
       </Typography>
-
-      <FileUploader updateImageUrls={setProductData} />
-
-      {productData?.imageUrl && productData?.imageUrl.length > 0 && <div className="mt-10 mb-4">
-        <div className="">Pick cover image</div>
-          <div className="px-4 py-2 w-full flex gap-2">
-            {productData.imageUrl.map((url,index)=>
-              <img
-              key={index}
-              src={`${url}@lq`}
-              className={`w-24 cursor-pointer ${productData.defaultImageIndex === index ? 'border-2 border-blue-500' : ''}`}
-              onClick={() => handleImageSelect(index)}
-            />
-            )}
-          </div>
-        </div>
-        }
-
-      <form onSubmit={handleSubmit} className="min-h-screen mt-4" noValidate>
+      <form onSubmit={handleSubmit} className="min-h-screen" noValidate>
         <Grid container spacing={2}>
-
+          {productData.imageUrl.map((url, index) => (
+            <Grid item xs={12} key={`imageUrl-${index}`}>
+              <TextField
+                fullWidth
+                label={`Image URL ${index + 1}`}
+                name={`imageUrl-${index}`}
+                value={url}
+                onChange={(e) => handleImageUrlChange(e, index)}
+                required
+              />
+            </Grid>
+          ))}
           {[
             "brand",
             "title",
@@ -108,6 +97,7 @@ const CreateProductForm = () => {
             "SKU",
             "neck_type", 
             "sleeve_style",
+            "collections"
           ].map((field, index) => (
             <Grid item xs={12} sm={index % 2 === 0 ? 12 : 12} key={field}>
               <TextField
@@ -124,7 +114,7 @@ const CreateProductForm = () => {
                     : field === "sleeve_style"
                     ? "Sleeve Style"
                     : field === "collections"
-                    ? "Select Collection Name"
+                    ? "Collections"
                     : field.charAt(0).toUpperCase() +
                       field.slice(1).replace(/([A-Z])/g, " $1").trim()
                 }
@@ -138,25 +128,6 @@ const CreateProductForm = () => {
               />
             </Grid>
           ))}
-          <Grid item xs={12}>
-              <InputLabel id="collection-select-label">Select Collection</InputLabel>
-              <Select
-                className="w-full"
-                labelId="collection-select-label"
-                id="collection-select"
-                value={productData.collectionName}
-                label="Select Collection"
-                name='Select Collection'
-                onChange={(e)=>{setProductData(pre=>({...pre, collectionName: e.target.value}))}}
-                required
-              >
-              <MenuItem value={'Radiant Rebellion'}>Radiant Rebellion</MenuItem>
-              <MenuItem value={'Empowered Ember'}>Empowered Ember</MenuItem>
-              <MenuItem value={'Minted Resolve'}>Minted Resolve</MenuItem>
-              <MenuItem value={'Eclipsed'}>Eclipsed</MenuItem>
-              <MenuItem value={'Stripes of Strength'}>Stripes of Strength</MenuItem>
-            </Select>
-          </Grid>
           <Grid item xs={12}>
             <TextField
               fullWidth
