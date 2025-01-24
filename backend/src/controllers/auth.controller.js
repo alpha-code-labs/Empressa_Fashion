@@ -4,7 +4,11 @@ const bcrypt=require("bcrypt")
 const cartService=require("../services/cart.service.js")
 const otpService=require("../services/otp.service.js")
 const emailService=require("../services/email.service.js")
+const { OAuth2Client } = require('google-auth-library');
 
+const clientId = process.env.GOOGLE_CLIENT_ID;
+
+const client = new OAuth2Client(clientId);
 
 const register=async(req,res)=>{
 
@@ -15,13 +19,14 @@ const register=async(req,res)=>{
         await cartService.createCart(user);
         const otp = otpService.generateOtp();
         await userService.saveVerificationOtp(user._id, otp);
-        // await emailService.sendAccountConfirmationEmail(user.email, otp);
-        // return res.status(200).send({message:"Successful! We have sent you a verification email.", emailSent: true});
+        await emailService.sendAccountConfirmationEmail(user.email.toLowerCase(), otp);
+        return res.status(200).send({message:"Successful! We have sent you a verification email.", emailSent: true});
 
         //temporary arrangement in absence of email service
-        const jwt=jwtProvider.generateToken(user._id);
-        user.accountVerified = true;
-        return res.status(200).send({jwt, message:"Successful! Registration successful", emailSent: true});
+        // const jwt=jwtProvider.generateToken(user._id);
+        // user.accountVerified = true;
+
+        //return res.status(200).send({jwt, message:"Successful! Registration successful", emailSent: true});
 
     } catch (error) {
         return res.status(500).send({error:error.message})
@@ -39,10 +44,10 @@ const forgotPassword = async (req, res) => {
         const otp = otpService.generateOtp();
         await userService.saveOtp(user._id, otp);
 
-        const resetLink = `${process.env.FRONTEND_URL}/reset-password?email=${encodeURIComponent(email)}&otp=${otp}`;
-        await emailService.sendResetPasswordEmail(email, resetLink);
+        const resetLink = `${process.env.FRONTEND_URL}/reset-password?email=${encodeURIComponent(email.toLowerCase())}&otp=${otp}`;
+        await emailService.sendResetPasswordEmail(email.toLowerCase(), resetLink);
 
-        res.status(200).send({ message: "Please check your email; a link to reset your password has been sent." });
+        res.status(200).send({ message: "Please check your email. A link to reset your password has been sent." });
     } catch (error) {
         res.status(500).send({ error: error.message });
     }
@@ -51,7 +56,7 @@ const forgotPassword = async (req, res) => {
 const login=async(req,res)=>{
     const {password,email}=req.body
     try {
-        const user = await userService.getUserByEmail(email);
+        const user = await userService.getUserByEmail(email.toLowerCase());
 
         if (!user) {
             return res.status(404).json({ message: 'User not found With Email ', email});
@@ -153,4 +158,42 @@ const loginWithGoogle = async(userData)=>{
     }
 }
 
-module.exports={ register, login, forgotPassword, resetPassword, verifyUser, loginWithGoogle, googleCallback };
+const verifyGoogleUser = async(req, res)=>{
+    try{
+        const token = req.body.idToken
+        console.log(token, 'token from google signin in request');
+        const ticket = await client.verifyIdToken({
+            idToken: token,
+            audience: clientId,
+        });
+        const payload = ticket.getPayload();
+        console.log(payload, 'payload after processing...');
+        //get user info
+        const email = payload.email;
+        const firstName = payload.given_name;
+        const lastName = payload.family_name;
+        const guid = payload.sub;
+        const verifiedEmail = payload.email_verified;
+
+        const user_ = await userService.getUserByGoogleId(guid);
+
+        if (user_) {
+            const jwt = jwtProvider.generateToken(user_._id);
+            return res.status(200).json({success: true, jwt});
+        }else{
+            //see if email is registered
+            if(await userService.getUserByEmail(email)) return res.status(403).json({success: false, error: 'Email already registered. Please login with your credentials'})
+            //create and return new user
+            const user = await userService.createGoogleUser({email, firstName, lastName, guid, verifiedEmail});
+            await cartService.createCart(user);
+            const jwt = jwtProvider.generateToken(user._id);
+            return res.status(200).json({success: true, jwt});
+        }
+    }catch(e){
+        res.status()
+        console.log(e);
+    }
+
+}
+
+module.exports={ register, login, forgotPassword, resetPassword, verifyUser, loginWithGoogle, googleCallback, verifyGoogleUser };

@@ -66,7 +66,7 @@ const createUser = async (userData) => {
       const { firstName, lastName, email, password, role, referralCode } = userData;
   
       // Check if user already exists
-      const existingUser = await User.findOne({ email });
+      const existingUser = await User.findOne({ email: email.toLowerCase() });
       if (existingUser) {
         throw new Error(`This email is already registered. Please login with your credentials.`);
       }
@@ -102,7 +102,7 @@ const validateUserData = (data) => {
 // Create new user without referral
 const createNewUser = async (userData, hashedPassword) => {
   const { firstName, lastName, email, role } = userData;
-  return await User.create({ firstName, lastName, email, password: hashedPassword, role });
+  return await User.create({ firstName, lastName, email:email.toLowerCase(), password: hashedPassword, role });
 };
 
 // Handle referral code logic
@@ -127,7 +127,7 @@ const handleReferralCode = async (userData, hashedPassword) => {
   const user = await User.create({
     firstName,
     lastName,
-    email,
+    email:email.toLowerCase(),
     password: hashedPassword,
     role,
     referralRewards: 5,
@@ -159,7 +159,8 @@ const findUserById=async(userId)=>{
 }
 
 const getUserByEmail = async (email) => {
-    return await User.findOne({ email });
+  console.log(email.toLowerCase(), 'lower case email')
+    return await User.findOne({ email:email.toLowerCase() });
 };
 
 const getUserProfileByToken=async(token)=>{
@@ -218,6 +219,48 @@ const updatePassword = async (userId, newPassword) => {
     });
 };
 
+const getAdmins = async()=>{
+  try{
+    const admins = User.find({ role : 'ADMIN' });
+    return admins;
+  }catch(e){
+    console.log(e);
+    throw e;
+  }
+}
+
+
+const getUserByGoogleId = async (googleId)=>{
+    return User.findOne({googleId});
+}
+
+const createGoogleUser = async (userData) => {
+  try {
+ 
+    const { firstName, lastName, email, guid, verifiedEmail } = userData;
+
+    // Check if user already exists
+    const existingUser = await User.findOne({ email:email.toLowerCase() });
+    if (existingUser) {
+      throw new Error(`This email is already registered. Please login with your credentials.`);
+    }
+
+    // Hash the password
+    const hashedPassword = await bcrypt.hash(guid, 8);
+
+    const user = await User.create({ firstName, lastName, email, password: hashedPassword, role:'CUSTOMER', accountVerified:true, googleId:guid });
+
+    //create user wallet
+    await walletService.creatUserWallet(user._id);
+    console.log("User created:", user);
+
+    return user;
+
+  } catch (error) {
+    console.error("Error creating user:", error.message);
+    throw new Error(error.message);
+  }
+};
 
 module.exports={
     createUser,
@@ -227,5 +270,9 @@ module.exports={
     saveOtp,
     saveVerificationOtp,
     updatePassword,
-    getAllUsers
+    getAllUsers,
+    getAdmins,
+    getUserByGoogleId,
+    createGoogleUser,
+    createGoogleUser,
 }
