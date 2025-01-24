@@ -17,13 +17,9 @@ import Order from "../components/Order/Order";
 import Reset from "../Auth/Reset";
 import JournalList from "../components/Journal/JournalList";
 import JournalDetail from "../components/Journal/JournalDetails";
-<<<<<<< HEAD
-import WomenWarriors from "../pages/WomenWarriors";
-=======
 import GoogleCallback from "../Auth/GoogleCallback";
 import FacebookCallback from "../Auth/FacebookCallback";
 import NotFound from "./NotFound";
->>>>>>> d35fb96a2073bdeddde76a6b7ab6a082f47c3a67
 
 const CustomerRouters = () => {
   const [search, setSearch] = useState("");
@@ -51,13 +47,9 @@ const CustomerRouters = () => {
         <Route path="/payment/:orderId" element={<PaymentSuccess />} />
         <Route path="/journals" element={<JournalList />} />
         <Route path="/journals/:id" element={<JournalDetail />} />
-<<<<<<< HEAD
-        <Route path="/women-warriors" element={<WomenWarriors />} />
-=======
         <Route path="/auth/google/callback" element={<GoogleCallback />} />
         <Route path="/auth/facebook/callback" element={<FacebookCallback />} />
         <Route path="*" element={<NotFound />} />
->>>>>>> d35fb96a2073bdeddde76a6b7ab6a082f47c3a67
       </Routes>
         <Footer />
     </div>
