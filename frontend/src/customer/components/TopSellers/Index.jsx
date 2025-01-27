@@ -3,65 +3,54 @@ import AliceCarousel from 'react-alice-carousel';
 import 'react-alice-carousel/lib/alice-carousel.css';
 import ProductCard from '../Product/ProductCard';
 import { useSelector } from 'react-redux';
-
-
-const products = [
-    {
-        name: 'Mini Dress',
-        thumbnail: 'images/23.webp',
-    },
-    {
-        name: 'Midi Dress',
-        thumbnail: 'images/24.webp',
-    },
-    {
-        name: 'Maxi Dress',
-        thumbnail: 'images/25.webp',
-    }
-]
-
-const responsive = {
-    0: { items: 1 },
-    568: { items: 2 },
-    1024: { items: 3 },
-};
+import CarouselComponent from '../Carousel/Index';
+import PlaceholderCard from './CardSkeleton';
+import { useNavigate } from 'react-router-dom';
+import ShallowButton from '../ShallowButton/Index';
+import { useEffect, useState } from 'react';
 
 const TopSellers = () => {
+    const topSellers = ['66bb4a193da21f8a8b161038',
+        '66bb47c53da21f8a8b161014',
+        '66bb4f583da21f8a8b16106e',
+        '676a49b9541de92a5cf9db77',                                       //'66bb4ac83da21f8a8b161041',
+        '66bb4fc33da21f8a8b161077']
+    const products = useSelector((state) => state.products).products.filter(p=>topSellers.includes(p._id));
+ 
+    
 
-    const { products } = useSelector((state) => state.products);
+    const defaultImageIndex = [2, 6, 1, 0, 3]
+    const navigate = useNavigate();
 
-    const finalProducts = [...products, ...products, ...products]
 
     console.log(products, 'products')
 
     return (
-        <>
-            <div className='w-full md:w-1/3 px-3 md:mb-0'>
-                <h1 className='font-ijk text-center text-4xl  text-black  mt-[100px] '>
-                    <div className="flex justify-center items-center p-4 ">
-                        <p className="p-2 px-4 group cursor-pointer"  >
-                        Top Sellers
-                            <div className="bg-amber-500 h-[2px] w-full group-hover:w-[50%] transition-all duration-500"></div>
-                        </p>
-                    </div>
-                </h1>
-            </div>
+        <div className='sm:mt-24' id='top-selling-section'>
+             <div className="container mx-auto sm:px-2 px-4">
+                <div className="flex w-full items-start justify-start">
+                <p className="px-1 py-1 sm:px-4 group font-roboto tracking-wide text-center text-xl sm:text-2xl md:text-2xl  text-neutral-700"  >
+                        TOP SELLING
+                        {/* <div className="bg-amber-500 h-[2px] w-full transition-all duration-500"></div> */}
+                    </p>
+                </div>
+                
+                <div className="w-full mx-auto">
+                    {products != undefined && products !=null && products.length >0 && 
+                        <CarouselComponent isDummy={false} key='top_sellers_carousel' items={products.map((product,index)=><Card product={product} defaultImageIndex={defaultImageIndex[index]??0}/>)} />
+                    }
 
-            <div className="container mx-auto px-4">
-                <div className="w-full lg:w-4/5 mx-auto">
-                    <AliceCarousel 
-                        mouseTracking
-                        responsive={responsive}
-                        controlsStrategy="alternate"
-                        items={finalProducts.map(product=><Card product={product}/>)}
-                    />
+                    {products === undefined || products ==null || products.length == 0 &&
+                        <CarouselComponent isDummy={true} key='top_sellers_carousel' items={[<PlaceholderCard/>, <PlaceholderCard/>, <PlaceholderCard/>, <PlaceholderCard/>, <PlaceholderCard/>]} />
+                    }
                 </div>
             </div>
-
-            {/* <div className='w-[60%] mx-auto grid gap-5 mt-[100px] sm:grid-cols-3'>
-               {products.map(product=><Card title={product.name} shopTitle={'SHOP NOW'} imageSrc={product.thumbnail} />)}
-            </div> */}
-        </>
+            
+            <h1 className='font-roboto text-center pb-10'>
+                <ShallowButton shopTitle={'VIEW ALL PRODUCTS'} onClick={() => navigate("/products")} />
+            </h1>
+            
+        </div>
     )
 }
 

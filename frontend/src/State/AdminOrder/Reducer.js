@@ -17,6 +17,7 @@ import {
   PLACED_ORDER_FAILURE,
   PLACED_ORDER_REQUEST,
   PLACED_ORDER_SUCCESS,
+  RESET_ADMIN_ORDER_STATE,
   SHIP_ORDER_FAILURE,
   SHIP_ORDER_REQUEST,
   SHIP_ORDER_SUCCESS,
@@ -47,10 +48,10 @@ export const adminOrderReducer = (state = initialState, action) => {
         orders: [],
         error: action.payload,
       };
-    case CONFIRMED_ORDER_REQUEST:
-    case PLACED_ORDER_REQUEST:
-    case DELIVERED_ORDER_REQUEST:
-    case CANCELED_ORDER_REQUEST:
+    case CONFIRMED_ORDER_REQUEST: return {...state, loading:true}
+    case PLACED_ORDER_REQUEST: return {...state, loading:true}
+    case DELIVERED_ORDER_REQUEST: return {...state, loading:true}
+    case CANCELED_ORDER_REQUEST: return {...state, loading:true}
       return {
         ...state,
         isLoading: true,
@@ -115,6 +116,8 @@ export const adminOrderReducer = (state = initialState, action) => {
         isLoading: false,
         error: action.payload,
       };
+    case RESET_ADMIN_ORDER_STATE:
+      return {...initialState}
     default:
       return state;
   }

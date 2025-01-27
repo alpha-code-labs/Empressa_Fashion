@@ -6,11 +6,17 @@ import { findProducts } from "./../../../State/Product/Action";
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import { Typography } from "@mui/material";
+import { findCollections } from "../../../State/Collection/Action";
+import Placeholder from "./ProductSkeleton";
 
-const Product = ({ search }) => {
+const Product = ({ search, collectionId}) => {
   const param = useParams();
   const dispatch = useDispatch();
-  const { products } = useSelector((state) => state.products);
+  const  products  = useSelector((state) => state.products).products.filter(product=>product.collections == collectionId);
+  const currentProducts = useSelector((state) => state.products).products.filter(product=>product.collections == collectionId);
+  const { collections } = useSelector((state) => state.collections);
+  const [collection, setCollection] = useState({});
+  const defaultImageIndex = [2, 6, 1, 0, 3]
 
   const [filterSize, setFilterSize] = useState({
     s: false,
@@ -29,62 +35,57 @@ const Product = ({ search }) => {
   const sortValue = searchParams.get("sort") || "price_low";
   const pageNumber = searchParams.get("page") || 1;
 
-  const [copyProduct, setCopyProduct] = useState([]);
+  const [copyProduct, setCopyProduct] = useState(products);
   const [currentPage, setCurrentPage] = useState(1);
   const productsPerPage = 15;
 
   const handleSizeFilter = (e) => {
-    setFilterSize((prevFilterSize) => ({
-      ...prevFilterSize,
-      [e.target.name]: !prevFilterSize[e.target.name],
-    }));
+    console.log(e.target.name, e.target.checked, 'size checked')
+    setFilterSize((prevFilterSize) => {
+      if(prevFilterSize.includes(e.target.name)) return prevFilterSize.filter(size=>size != e.target.name)
+      return [...prevFilterSize, e.target.name]
+    });
   };
 
-  useEffect(() => {
-    const filterProducts = () => {
-      let finalArray = [];
+  useEffect(()=>{
+    if(products.length == 0){
+      const [minPrice, maxPrice] = priceValue
+      ? priceValue.split("-").map(Number)
+      : [0, 100000];
 
-      // Apply size filters
-      const allFalse = Object.values(filterSize).every((value) => !value);
-
-      if (allFalse) {
-        finalArray = products;
-      } else {
-        Object.keys(filterSize).forEach((sizeKey) => {
-          if (filterSize[sizeKey]) {
-            finalArray = finalArray.concat(
-              products.filter((el) => {
-                const findValue = el.sizes.find(
-                  (el1) => el1.name.toLowerCase() === sizeKey && el1.quantity > 0
-                );
-                return findValue ? true : false;
-              })
-            );
-          }
-        });
-      }
-
-      finalArray = [...new Set(finalArray)];
-
-      // Apply search filters
-      if (search) {
-        finalArray = finalArray.filter((el) => {
-          return (
-            el.title.toLowerCase().includes(search.toLowerCase()) ||
-            el.brand.toLowerCase().includes(search.toLowerCase())
-          );
-        });
-      }
-
-      setCopyProduct([...finalArray]);
-      setCurrentPage(1);
-    };
-
-    if (products && products.length > 0) {
-      filterProducts();
+      const data = {
+        category: param.level,
+        colors: colorValue ? colorValue.split(",") : [],
+        sizes: sizeValue ? sizeValue.split(",") : [],
+        minPrice,
+        maxPrice,
+        minDiscount: discount,
+        sort: sortValue,
+        pageNumber,
+        pageSize: 30,
+      };
+       dispatch(findProducts(data));
     }
-  }, [filterSize, search, products]);
+  },[]);
 
+  useEffect(()=>{
+    setCollection(collections?.find(collection => collection._id == collectionId));
+    if(collections== undefined || collections.length == 0){
+      dispatch(findCollections());
+    }
+  },[collections])
+
+
+  useEffect(()=>{
+    console.log(filterSize, 'filtered size ... given here');
+  },[filterSize])
+
+ 
+
+  const totalPages = Math.ceil(copyProduct.length / productsPerPage);
+  const indexOfLastProduct = currentPage * productsPerPage;
+  const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
+  
   useEffect(() => {
     const [minPrice, maxPrice] = priceValue
       ? priceValue.split("-").map(Number)
@@ -101,7 +102,11 @@ const Product = ({ search }) => {
       pageNumber,
       pageSize: 30,
     };
+  
     dispatch(findProducts(data));
+
+ 
+    //  currentProducts = products.slice(indexOfFirstProduct, indexOfFirstProduct);
   }, [
     param.level,
     colorValue,
@@ -110,16 +115,7 @@ const Product = ({ search }) => {
     discount,
     sortValue,
     pageNumber,
-    dispatch,
   ]);
-
-  const totalPages = Math.ceil(copyProduct.length / productsPerPage);
-  const indexOfLastProduct = currentPage * productsPerPage;
-  const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
-  const currentProducts = copyProduct.slice(
-    indexOfFirstProduct,
-    indexOfLastProduct
-  );
 
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
@@ -132,20 +128,21 @@ const Product = ({ search }) => {
     }
 
     return (
-      <div className="flex justify-center ml-20 ">
+      <div className="flex justify-center ">
         <button
           onClick={() => handlePageChange(currentPage - 1)}
           disabled={currentPage === 1}
           className="px-3 py-1 mx-1 border rounded hover:bg-gray-200 disabled:opacity-20"
         >
-          <ChevronLeftIcon />
+          <ChevronLeftIcon/>
         </button>
         {pageNumbers.map((number) => (
           <button
             key={number}
             onClick={() => handlePageChange(number)}
-            className={`px-3 py-1 mx-1 border rounded hover:bg-gray-200 ${currentPage === number ? "text-white  bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium text-sm px-5 py-2.5 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700" : ""
-              }`}
+            className={`px-3 py-1 mx-1 border rounded hover:bg-gray-200 ${
+              currentPage === number ? "text-white  bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium text-sm px-5 py-2.5 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700" : ""
+            }`}
           >
             {number}
           </button>
@@ -155,28 +152,27 @@ const Product = ({ search }) => {
           disabled={currentPage === totalPages}
           className="px-3 py-1 mx-1 border rounded hover:bg-gray-200 disabled:opacity-20"
         >
-          <ChevronRightIcon />
+          <ChevronRightIcon/>
         </button>
       </div>
     );
   };
 
-  return (
-    <div className="min-h-80 bg- md:min-h-screen pb-16">
-      <div className="flex items-center justify-center p-6">
-        {/* <div className="bg-gray-100 px-4 py-1 rounded-md shadow-md">
-          <Typography sx={{fontFamily:'heading', fontSize:{lg:"40px", md:"32px", sm:"24px", xs:"20px"}}} variant="h4">
-            Online Boutique
-          </Typography>
-        </div> */}
-      </div>
+  return (<>
+    { collection != undefined && <div className="min-h-80 bg- md:min-h-screen pb-16 px-4 sm:px-6">
       <div className="container mx-auto">
-        <div className="flex">
-          <div className="px-4 pt-5 bg-white">
+        
+        <div className="mt-24 bg-[#fff]  border-b border-b-[1px] border-gray-100 py-4 text-neutral-800  px-4 sm:px-6 font-sans w-full flex flex-col gap-4 items-center justify-center">
+          <h1 className="text-xl sm:text-2xl">{collection?.name}</h1>
+          <p className="text-sm text-justify sm:text-[16px] text-neutral-600">{collection?.description}</p>
+        </div>
+
+        <div className="flex mt-14">
+          <div className="px-4 pt-5 bg-white hidden">
             <div className="grid divide-y divide-neutral-200 max-w-xl mx-auto">
               <div className="py-5">
                 <details className="group" open>
-                  <summary className="font-heading flex justify-between items-center cursor-pointer list-none space-x-4">
+                  <summary className="font-roboto flex justify-between items-center cursor-pointer list-none space-x-4">
                     <span>
                       SIZE
                     </span>
@@ -220,29 +216,28 @@ const Product = ({ search }) => {
             </div>
           </div>
           <div className="sm:col-span-10 w-full">
-            <div className="flex flex-wrap rounded-lg items-center w-auto justify-center">
+            <div className="flex flex-wrap rounded-lg items-center sm:items-start justify-center w-full justify-start">
               {currentProducts.length === 0 ? (
-                <div className="min-h-80 text-center font-heading text-xl flex p-2 flex-col items-center justify-center">
-                  <img
-                    src="https://res.cloudinary.com/du5p1rnil/image/upload/f_auto,q_auto/v1/empressa/zie318b0p0k9jdcqhje1"
-                    alt="noProductImage"
-                    className="h-20"
-                  />
-                  <span className="block">SORRY!</span>
-                  <span className="block">We could not find any products to match your search</span>
-                </div>
-              ) : (
-                currentProducts.map((product) => (
-                  <ProductCard product={product} key={product._id} />
-                ))
-              )}
+                  <p className="min-h-80 text-center font-heading text-lg sm:text-xl flex p-2 flex-col items-center justify-center">
+                  <span className="block">We don't have anything available here currently.</span>
+                  <span className="block">Check out our other collections!</span>
+                </p>
+                
+              ) : (<div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-y-6 gap-x-2">
+                {currentProducts.map((product, index) => (
+                  <ProductCard product={product} key={product._id} defaultImageIndex={defaultImageIndex[index]??0} />
+                ))}
+                </div>)}
             </div>
           </div>
         </div>
       </div>
-      {renderPagination()}
-    </div>
-  );
+      {/* {renderPagination()} */}
+    </div> }
+    
+    {collection == undefined && <Placeholder/> }
+
+    </>);
 };
 
 export default Product;

@@ -7,34 +7,34 @@ function Footer() {
   const navigate =useNavigate()
   return (
     <>
-      <link
+      {/* <link
         rel="stylesheet"
         href="https://demos.creative-tim.com/notus-js/assets/styles/tailwind.css"
-      />
-      <link
+      /> */}
+      {/* <link
         rel="stylesheet"
         href="https://demos.creative-tim.com/notus-js/assets/vendor/@fortawesome/fontawesome-free/css/all.min.css"
-      />
+      /> */}
 
-      <footer className="relative bg-gray-400 pt-8 pb-6">
+      <footer className="relative bg-slate-50 border border-t-[1px] border-t-slate-200 min-h-[250px] pt-6">
         <div className="container mx-auto px-4">
-          <div className="flex flex-wrap text-left lg:text-left">
+          <div className="flex flex-wrap text-left lg:text-left mb-6">
             <div className="w-full lg:w-6/12 px-4">
-              <h4 className="text-3xl italic font-heading ">
+              <h4 className="text-3xl font-roboto ">
                 EMPRESSA
               </h4>
-              <h5 className="text-gray-900 italic text-lg mt-0 mb-2">
+              <h5 className="text-gray-900 font-roboto text-lg mt-0 mb-2">
                 BE BOLD, BE YOU, BE UNSTOPPABLE
               </h5>
-              <div className="mt-6 lg:mb-0 mb-6">
-                <button onClick={() => window.location.href = "https://www.instagram.com/empressa_fashion/"}
-                  className="bg-white text-gray-500 shadow-lg font-normal h-10 w-10 items-center justify-center align-center rounded-full outline-none focus:outline-none mr-2"
+              <div className="mt-2 flex gap-2 lg:mb-0 mb-6">
+                <button onClick={() => window.location.href = "https://www.instagram.com/empressa.fashion/"}
+                  className="flex bg-white text-gray-500 shadow-lg font-normal h-10 w-10 items-center justify-center align-center rounded-full outline-none focus:outline-none mr-2"
                   type="button"
                 >
                   <InstagramIcon />
                 </button>
                 <button onClick={() => navigate("/contact")}
-                  className="bg-white text-gray-500 shadow-lg font-normal h-10 w-10 items-center justify-center align-center rounded-full outline-none focus:outline-none mr-2"
+                  className="flex bg-white text-gray-500 shadow-lg font-normal h-10 w-10 items-center justify-center align-center rounded-full outline-none focus:outline-none mr-2"
                   type="button"
                 >
                   <EmailIcon />
@@ -65,9 +65,9 @@ function Footer() {
                       </Link>
                     </li>
                     <li>
-                      <Link to="/journal">
+                      <Link to="/women-warriors">
                         <p className="text-gray-800 hover:text-blueGray-800 font-semibold block pb-2 text-sm">
-                          Journal
+                          Women Warriors
                         </p>
                       </Link>
                     </li>
@@ -78,13 +78,13 @@ function Footer() {
                     Other Resources
                   </span>
                   <ul className="list-unstyled">
-                    <li>
+                    {/* <li>
                       <Link to="/refund">
                         <p className="text-gray-800 hover:text-blueGray-800 font-semibold block pb-2 text-sm">
                           Refund
                         </p>
                       </Link>
-                    </li>
+                    </li> */}
                     <li>
                       <Link to="/privacy">
                         <p className="text-gray-800 hover:text-blueGray-800 font-semibold block pb-2 text-sm">
@@ -95,7 +95,7 @@ function Footer() {
                     <li>
                       <Link to="/term">
                         <p className="text-gray-800 hover:text-blueGray-800 font-semibold block pb-2 text-sm">
-                          Terms & Conditions
+                          Term and Services
                         </p>
                       </Link>
                     </li>
@@ -104,8 +104,7 @@ function Footer() {
               </div>
             </div>
           </div>
-          <hr className="my-6 border-black" />
-          <div className="flex flex-wrap items-center md:justify-between justify-center">
+          <div className="absolute bottom-0 left-0 w-full flex flex-wrap items-center md:justify-between justify-center">
             <div className="w-full md:w-4/12 px-4 mx-auto text-center">
               <div className="text-sm text-gray-800 font-semibold py-1">
                 Copyright © <span id="get-current-year">2024</span>

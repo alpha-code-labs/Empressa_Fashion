@@ -1,9 +1,11 @@
-const withMT = require("@material-tailwind/react/utils/withMT");
 
-module.exports = withMT({
+module.exports = {
   content: ["./src/**/*.{js,jsx,ts,tsx}"],
   theme: {
     extend: {
+      backgroundImage: {
+        'heading-bg': "url('/images/bg_2.jfif')",
+      },
       animation: {
         marquee: 'marquee 25s linear infinite',
         marquee2: 'marquee2 25s linear infinite',
@@ -14,7 +16,7 @@ module.exports = withMT({
       fontFamily: {
         heading: ["Playfair Display", "serif"],
         text: ["Cormorant", "serif"],
-        product: ["Playwrite Deutschland Lateinische Ausgangsschrift"]
+        sans: ['Inter', 'system-ui', 'Avenir', 'Helvetica', 'Arial', 'sans-serif'],
       },
       keyframes: {
         marquee: {
@@ -30,4 +32,4 @@ module.exports = withMT({
     },
   },
   plugins: [],
-});
+};

@@ -2,42 +2,58 @@ import React, { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Avatar, Menu, MenuItem } from "@mui/material";
 import { Collapse, Typography, List, ListItem } from "@material-tailwind/react";
-import {
-  UserCircleIcon,
-  ShoppingBagIcon,
-  Bars3Icon,
-  XMarkIcon,
-} from "@heroicons/react/24/outline";
+import { UserCircleIcon, ShoppingBagIcon, Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 
 import AuthModal from "../../Auth/AuthModal";
 import { useDispatch, useSelector } from "react-redux";
 import { getUser, logout } from "../../../State/Auth/Action";
-import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
+import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
 
-import SearchBar from "./SearchBar";
+import SearchBar from "./SearchBar";  // Import the SearchBar component
 
-function NavList({ search, setSearch }) {
+function NavList() {
   return (
     <List className="flex lg:ml-[200px] items-center lg:flex-row flex-col lg:items-center lg:w-auto w-full">
       <Typography>
-      <ListItem className="lg:hidden">
-        <SearchBar search={search} setSearch={setSearch} />
-      </ListItem>
+        <ListItem>
+          <div className="lg:hidden">
+            <SearchBar /> {/* Use SearchBar component for mobile view */}
+          </div>
+        </ListItem>
       </Typography>
-      <Typography as={Link} to="/products" variant="h6" className="font-heading">
+      <Typography
+        as={Link}
+        to="/products"
+        variant="small"
+        color="blue-gray"
+        className="font-medium text-base uppercase font-abc"
+      >
         <ListItem>Our Products</ListItem>
       </Typography>
-      <Typography as={Link} to="/about" variant="h6" className="font-heading">
+
+      <Typography
+        as={Link}
+        to="/about"
+        variant="small"
+        color="blue-gray"
+        className="font-medium text-base uppercase font-abc"
+      >
         <ListItem>About Us</ListItem>
       </Typography>
-      <Typography as={Link} to="/journals" variant="h6" className="font-heading">
+      <Typography
+        as={Link}
+        to="/journal"
+        variant="small"
+        color="blue-gray"
+        className="font-medium text-base uppercase font-abc"
+      >
         <ListItem>Journal</ListItem>
       </Typography>
     </List>
   );
 }
 
-export default function Head({ search, setSearch }) {
+export default function Head() {
   const [openNav, setOpenNav] = useState(false);
   const navigate = useNavigate();
   const [openAuthModal, setOpenAuthModal] = useState(false);
@@ -49,23 +65,16 @@ export default function Head({ search, setSearch }) {
   const jwt = localStorage.getItem("jwt");
   const auth = useSelector((state) => state.auth);
 
-  const handleOpen = () => {
-    setOpenAuthModal(true);
-  };
-
   const handleUserClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
-
-  const handleMenuItemClick = (path) => {
-    navigate(path);
-    handleCloseUserMenu();
-  };
-
   const handleCloseUserMenu = () => {
     setAnchorEl(null);
   };
 
+  const handleOpen = () => {
+    setOpenAuthModal(true);
+  };
   const handleClose = () => {
     setOpenAuthModal(false);
   };
@@ -78,10 +87,10 @@ export default function Head({ search, setSearch }) {
   useEffect(() => {
     if (jwt) {
       dispatch(getUser(jwt));
-    } else if (location.pathname === '/login') {
-      handleOpen();
+    } else {
+      setOpenAuthModal(true);
     }
-  }, [jwt, location.pathname, dispatch]);
+  }, [jwt, auth.jwt]);
 
   useEffect(() => {
     if (auth.user) {
@@ -92,80 +101,54 @@ export default function Head({ search, setSearch }) {
     }
   }, [auth.user]);
 
-  const isAdmin = auth?.user?.role === "ADMIN";
-
   return (
-    <div className="pb-2">
-      <div className="bg-[#eeeeee] py-1 text-center overflow-hidden">
+    <div className="nav-container mx-auto bg-white">
+      <div className="bg-[#e8e2b0] text-black py-1 text-center overflow-hidden">
         <div className="relative flex overflow-x-hidden">
           <div className="py-1 animate-marquee whitespace-nowrap">
             <span className="ml-8"></span>
-            <FiberManualRecordIcon style={{ fontSize: "10px" }} />
+            <FiberManualRecordIcon style={{ fontSize: '10px' }} />
+            <span className="ml-8"></span><span className="italic"> Be BOLD</span>
+            <span className="ml-8"></span><span className="italic">Be YOU</span>
+            <span className="ml-8"></span><span className="italic">Be UNSTOPPABLE</span>
             <span className="ml-8"></span>
-            <span className="italic"> Be BOLD</span>
+            <FiberManualRecordIcon style={{ fontSize: '10px' }} />
+            <span className="ml-8"></span><span className="italic"> Be BOLD</span>
+            <span className="ml-8"></span><span className="italic">Be YOU</span>
+            <span className="ml-8"></span><span className="italic">Be UNSTOPPABLE</span>
             <span className="ml-8"></span>
-            <span className="italic">Be YOU</span>
+            <FiberManualRecordIcon style={{ fontSize: '10px' }} />
+            <span className="ml-8"></span><span className="italic"> Be BOLD</span>
+            <span className="ml-8"></span><span className="italic">Be YOU</span>
+            <span className="ml-8"></span><span className="italic">Be UNSTOPPABLE</span>
             <span className="ml-8"></span>
-            <span className="italic">Be UNSTOPPABLE</span>
-            <span className="ml-8"></span>
-            <FiberManualRecordIcon style={{ fontSize: "10px" }} />
-            <span className="ml-8"></span>
-            <span className="italic"> Be BOLD</span>
-            <span className="ml-8"></span>
-            <span className="italic">Be YOU</span>
-            <span className="ml-8"></span>
-            <span className="italic">Be UNSTOPPABLE</span>
-            <span className="ml-8"></span>
-            <FiberManualRecordIcon style={{ fontSize: "10px" }} />
-            <span className="ml-8"></span>
-            <span className="italic"> Be BOLD</span>
-            <span className="ml-8"></span>
-            <span className="italic">Be YOU</span>
-            <span className="ml-8"></span>
-            <span className="italic">Be UNSTOPPABLE</span>
-            <span className="ml-8"></span>
-            <FiberManualRecordIcon style={{ fontSize: "10px" }} />
-            <span className="ml-8"></span>
-            <span className="italic"> Be BOLD</span>
-            <span className="ml-8"></span>
-            <span className="italic">Be YOU</span>
-            <span className="ml-8"></span>
-            <span className="italic">Be UNSTOPPABLE</span>
+            <FiberManualRecordIcon style={{ fontSize: '10px' }} />
+            <span className="ml-8"></span><span className="italic"> Be BOLD</span>
+            <span className="ml-8"></span><span className="italic">Be YOU</span>
+            <span className="ml-8"></span><span className="italic">Be UNSTOPPABLE</span>
           </div>
 
           <div className="absolute top-0 py-1 animate-marquee2 whitespace-nowrap">
             <span className="ml-8"></span>
-            <FiberManualRecordIcon style={{ fontSize: "10px" }} />
+            <FiberManualRecordIcon style={{ fontSize: '10px' }} />
+            <span className="ml-8"></span><span className="italic"> Be BOLD</span>
+            <span className="ml-8"></span><span className="italic">Be YOU</span>
+            <span className="ml-8"></span><span className="italic">Be UNSTOPPABLE</span>
             <span className="ml-8"></span>
-            <span className="italic"> Be BOLD</span>
+            <FiberManualRecordIcon style={{ fontSize: '10px' }} />
+            <span className="ml-8"></span><span className="italic"> Be BOLD</span>
+            <span className="ml-8"></span><span className="italic">Be YOU</span>
+            <span className="ml-8"></span><span className="italic">Be UNSTOPPABLE</span>
             <span className="ml-8"></span>
-            <span className="italic">Be YOU</span>
+            <FiberManualRecordIcon style={{ fontSize: '10px' }} />
+            <span className="ml-8"></span><span className="italic"> Be BOLD</span>
+            <span className="ml-8"></span><span className="italic">Be YOU</span>
+            <span className="ml-8"></span><span className="italic">Be UNSTOPPABLE</span>
             <span className="ml-8"></span>
-            <span className="italic">Be UNSTOPPABLE</span>
-            <span className="ml-8"></span>
-            <FiberManualRecordIcon style={{ fontSize: "10px" }} />
-            <span className="ml-8"></span>
-            <span className="italic"> Be BOLD</span>
-            <span className="ml-8"></span>
-            <span className="italic">Be YOU</span>
-            <span className="ml-8"></span>
-            <span className="italic">Be UNSTOPPABLE</span>
-            <span className="ml-8"></span>
-            <FiberManualRecordIcon style={{ fontSize: "10px" }} />
-            <span className="ml-8"></span>
-            <span className="italic"> Be BOLD</span>
-            <span className="ml-8"></span>
-            <span className="italic">Be YOU</span>
-            <span className="ml-8"></span>
-            <span className="italic">Be UNSTOPPABLE</span>
-            <span className="ml-8"></span>
-            <FiberManualRecordIcon style={{ fontSize: "10px" }} />
-            <span className="ml-8"></span>
-            <span className="italic"> Be BOLD</span>
-            <span className="ml-8"></span>
-            <span className="italic">Be YOU</span>
-            <span className="ml-8"></span>
-            <span className="italic">Be UNSTOPPABLE</span>
+            <FiberManualRecordIcon style={{ fontSize: '10px' }} />
+            <span className="ml-8"></span><span className="italic"> Be BOLD</span>
+            <span className="ml-8"></span><span className="italic">Be YOU</span>
+            <span className="ml-8"></span><span className="italic">Be UNSTOPPABLE</span>
           </div>
         </div>
       </div>
@@ -174,37 +157,42 @@ export default function Head({ search, setSearch }) {
         <Typography
           as={Link}
           to="/"
-          className="cursor-pointer ml-10 flex flex-col items-center"
+          className="cursor-pointer py-0.5 align-items-center ml-10 flex flex-col items-center"
         >
           <img
             src="https://res.cloudinary.com/du5p1rnil/image/upload/v1712815729/empressa/trlajilv4tdjxco53foy.png"
             alt="Empressa"
-            className="h-12 w-12"
+            className="h-20 w-20"
           />
-          <div className="font-heading">
-            Empressa
-          </div>
+          <Typography
+            variant="small"
+            color="blue-gray"
+            className="mt-0.25 "
+          >
+            EMPRESSA
+          </Typography>
         </Typography>
+
         <div className="hidden lg:block">
-          <NavList search={search} setSearch={setSearch} />
+          <NavList />
         </div>
-        <div className="flex items-center">
-          <div className="hidden lg:block p-1">
-            <SearchBar search={search} setSearch={setSearch} />
+        <div className="flex md:ml-[564px] lg:ml-0  ml-[130px] m items-center justify-center">
+          <div className="mx-auto w-max lg:block hidden">
+            <SearchBar /> {/* Use SearchBar component for desktop view */}
           </div>
-          <div className="flex items-center p-1">
+
+          <div className="mb-1">
             {auth.user ? (
               <div>
-                <div
-                  className="h-8 w-8 flex items-center justify-center bg-gray-400 text-white rounded-full cursor-pointer"
+                <Avatar
+                  className="h-7 w-7 mt-1 ml-2 text-white cursor-pointer"
                   onClick={handleUserClick}
-                  aria-controls={openUserMenu ? "basic-menu" : undefined}
+                  aria-controls={openNav ? "basic-menu" : undefined}
                   aria-haspopup="true"
-                  aria-expanded={openUserMenu ? "true" : undefined}
+                  aria-expanded={openNav ? "true" : undefined}
                 >
                   {auth.user?.firstName[0].toUpperCase()}
-                </div>
-
+                </Avatar>
                 <Menu
                   id="basic-menu"
                   anchorEl={anchorEl}
@@ -212,36 +200,47 @@ export default function Head({ search, setSearch }) {
                   onClose={handleCloseUserMenu}
                   MenuListProps={{ "aria-labelledby": "user-circle" }}
                 >
-                  <MenuItem onClick={() => handleMenuItemClick("/order")}>My Orders</MenuItem>
-                  {isAdmin && (
-                    <MenuItem onClick={() => handleMenuItemClick("/admin")}>DashBoard</MenuItem>
-                  )}
+                  <MenuItem onClick={() => navigate("/profile")}>Profile</MenuItem>
+                  <MenuItem onClick={() => navigate("/order")}>My Orders</MenuItem>
                   <MenuItem onClick={handleLogout}>Logout</MenuItem>
                 </Menu>
               </div>
             ) : (
               <UserCircleIcon
-                className="h-7 w-7 cursor-pointer"
+                className="h-7 w-7 mt-1 cursor-pointer active:scale-50 ml-2"
                 onClick={handleOpen}
-                style={{ strokeWidth: "1" }}
               />
             )}
           </div>
-          <div className="flex items-center p-1">
-            <Link to="/cart">
-              <ShoppingBagIcon className="h-6 w-6 lg:mr-2 cursor-pointer" style={{ strokeWidth: "1.1" }} />
+          <div className="mb-2">
+            <Link to="/cart" className="group flex items-center p-2">
+              <ShoppingBagIcon
+                className="h-7 w-7 mt-1 cursor-pointer active:scale-50"
+                aria-hidden="true"
+              />
+              <span className="ml-2 text-sm font-medium text-gray-700 group-hover:text-gray-800">
+                {/* Display cart item count here */}
+              </span>
+              <span className="sr-only">items in cart, view bag</span>
             </Link>
           </div>
-          <div className="lg:hidden ml-2 mr-2" onClick={() => setOpenNav(!openNav)}>
-            {openNav ? <XMarkIcon className="h-6 w-6" /> : <Bars3Icon className="h-6 w-6" />}
-          </div>
+        </div>
+
+        <div
+          color="blue-gray"
+          className="lg:hidden mr-[30px]"
+          onClick={() => setOpenNav(!openNav)}
+          style={{ position: "relative" }}
+        >
+          {openNav ? (
+            <XMarkIcon className="absolute inset-0 m-auto h-6 w-6" />
+          ) : (
+            <Bars3Icon className="absolute inset-0 m-auto h-6 w-6" />
+          )}
         </div>
       </div>
-
       <Collapse open={openNav}>
-        <div className="lg:hidden">
-          <NavList search={search} setSearch={setSearch} />
-        </div>
+        <NavList />
       </Collapse>
 
       <AuthModal open={openAuthModal} handleClose={handleClose} />

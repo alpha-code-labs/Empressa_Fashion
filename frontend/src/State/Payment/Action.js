@@ -57,31 +57,34 @@ import {
         console.log("updated data ---- ",response.data)
         dispatch(updatePaymentSuccess(response.data));
       } catch (error) {
+        if(error.response){
+          dispatch(updatePaymentFailure(error.response.message));
+        }
         dispatch(updatePaymentFailure(error.message));
         console.log("catch error ",error)
       }
     };
   };
 
-export const updatePaymentRequest = () => {
-  return {
-    type: UPDATE_PAYMENT_REQUEST,
+  export const updatePaymentRequest = () => {
+    return {
+      type: UPDATE_PAYMENT_REQUEST,
+    };
   };
-};
 
-export const updatePaymentSuccess = (payment) => {
-  return {
-    type: UPDATE_PAYMENT_SUCCESS,
-    payload: payment,
+  export const updatePaymentSuccess = (payment) => {
+    return {
+      type: UPDATE_PAYMENT_SUCCESS,
+      payload: payment,
+    };
   };
-};
 
-export const updatePaymentFailure = (error) => {
-  return {
-    type: UPDATE_PAYMENT_FAILURE,
-    payload: error,
+  export const updatePaymentFailure = (error) => {
+    return {
+      type: UPDATE_PAYMENT_FAILURE,
+      payload: error,
+    };
   };
-};
 
  
   

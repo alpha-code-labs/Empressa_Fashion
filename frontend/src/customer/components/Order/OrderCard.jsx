@@ -13,26 +13,25 @@ const OrderCard = ({ item, order }) => {
         <Grid item xs={6}>
           <div className="flex cursor-pointer">
             <img
-              className="w-[5rem] h-[5rem] object-cover object-top"
-              src={item?.product?.imageUrl[0]}
+              className="h-[5rem] object-cover object-top"
+              src={`${item?.product?.imageUrl[item?.product?.defaultImageIndex]}@lq`}
               alt={item?.product?.title}
             />
             <div className="ml-5">
               <p className="mb-2">{item?.product?.title}</p>
-              <p className="opacity-50 text-xs font-semibold space-x-5">
+              <p className="text-neutral-400 text-xs font-semibold space-x-5">
                 <span>Size: {item?.size}</span>
               </p>
-              <p className="opacity-50 text-xs font-semibold space-x-5">
+              <p className="text-neutral-400 text-xs font-semibold space-x-5">
                 <span>Quantity: {item?.quantity}</span>
               </p>
-              
             </div>
           </div>
         </Grid>
 
         <Grid item xs={2}>
           <p>₹{item?.discountedPrice}</p>
-          <p className="mt-[10px] opacity-50 text-xs font-semibold space-x-5">
+          <p className="mt-[10px] text-neutral-400 text-xs font-semibold space-x-5">
                 <span>Order Date: {formatDate(item?.OrderDate)}</span>
               </p>
         </Grid>
